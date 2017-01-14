@@ -19,14 +19,62 @@ ser = serial.Serial(
     timeout=None
     )
 
-#ser.flushOutput()
 if  ser.isOpen():
     print 'Serial connected'
 
-
+# Must use with matching main.cpp in SAM3X8E-Libraries
 while True:
     head = ser.read(1)
-    print ([head])
+    # print ([head])    # Only needed for debugging
+    if head == '\x01':
+        integrity = False
+        print '\n'
+        print ("Start of sensor data")
+        # print 'X = '
+        accelX = ser.read(2)
+        # print ([accelX])
+        #
+        # print 'newline ='
+        newline = ser.read(2)   # Delimiter
+        # print ([newline])
+        #
+        # print 'Y = '
+        accelY = ser.read(2)
+        # print ([accelY])
+        #
+        # print 'newline ='
+        newline = ser.read(2)   # Delimiter
+        # print ([newline])
+        #
+        # print 'Z = '
+        accelZ = ser.read(2)
+        # print ([accelZ])
+        #
+        # print 'newline ='
+        newline = ser.read(2)   # Delimiter
+        # print ([newline])
+        #
+        end = ser.read(2)
+        # print ([end])
+        if(end == '\x00\x03'):
+            integrity = True
+            print 'Sensor Data Verified'
+            print '\nX = '
+            print ([accelX])
+            print '\nY = '
+            print ([accelY])
+            print '\nZ = '
+            print ([accelZ])
+        ser.read(1)         # The extra byte before 16BIT "head"
+        # print integrity
+        print '\n'
+
+
+''' Deprecated code #2
+# Must use with matching main.cpp in SAM3X8E-Libraries
+while True:
+    head = ser.read(1)
+    # print ([head])    # Only needed for debugging
     if head == '\x01':
         integrity = False
         print '\n'
@@ -63,9 +111,9 @@ while True:
         ser.read(1)
         print integrity
         print '\n'
+'''
 
-
-''' Old Code 1
+''' Deprecated Code #1
 #i = 0
 while (ser.inWaiting != 0):
     bytesToRead = ser.inWaiting()
