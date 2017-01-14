@@ -26,114 +26,26 @@ if  ser.isOpen():
 while True:
     head = ser.read(1)
     # print ([head])    # Only needed for debugging
-    if head == '\x01':
+    if head == '\x01':  # SOH
         integrity = False
         print '\n'
         print ("Start of sensor data")
-        # print 'X = '
+        #   Reads Accelerometer Sensor Data
         accelX = ser.read(2)
-        # print ([accelX])
-        #
-        # print 'newline ='
-        newline = ser.read(2)   # Delimiter
-        # print ([newline])
-        #
-        # print 'Y = '
         accelY = ser.read(2)
-        # print ([accelY])
-        #
-        # print 'newline ='
-        newline = ser.read(2)   # Delimiter
-        # print ([newline])
-        #
-        # print 'Z = '
         accelZ = ser.read(2)
-        # print ([accelZ])
-        #
-        # print 'newline ='
-        newline = ser.read(2)   # Delimiter
-        # print ([newline])
-        #
+        #   Tests End of Text (ETX)
         end = ser.read(2)
         # print ([end])
         if(end == '\x00\x03'):
             integrity = True
             print 'Sensor Data Verified'
-            print '\nX = '
+            print 'X = '
             print ([accelX])
-            print '\nY = '
+            print 'Y = '
             print ([accelY])
-            print '\nZ = '
+            print 'Z = '
             print ([accelZ])
         ser.read(1)         # The extra byte before 16BIT "head"
         # print integrity
         print '\n'
-
-
-''' Deprecated code #2
-# Must use with matching main.cpp in SAM3X8E-Libraries
-while True:
-    head = ser.read(1)
-    # print ([head])    # Only needed for debugging
-    if head == '\x01':
-        integrity = False
-        print '\n'
-        print ("Start of sensor data")
-        print 'X = '
-        accelX = ser.read(2)
-        print ([accelX])
-        #
-        print 'newline ='
-        print ([ser.read(2)])
-        #
-        print 'Y = '
-        accelY = ser.read(2)
-        print ([accelY])
-        #
-        print 'newline ='
-        print ([ser.read(2)])
-        #
-        print 'Z = '
-        accelZ = ser.read(2)
-        print ([accelZ])
-        #
-        print 'newline ='
-        print ([ser.read(2)])
-        #
-        end = ser.read(2)
-        print ([end])
-        if(end == '\x00\x03'):
-            integrity = True
-            print 'Sensor Data Verified'
-            #print accelX
-            #print accelY
-            #print accelZ
-        ser.read(1)
-        print integrity
-        print '\n'
-'''
-
-''' Deprecated Code #1
-#i = 0
-while (ser.inWaiting != 0):
-    bytesToRead = ser.inWaiting()
-    #read = ser.read(bytesToRead)
-    readByte = ser.read(1)
-    #buf = struct.pack('%sf' % len(read), *read)
-    #i = int(read,16)
-    #ser.write(read)
-    #read1 = ser.read()
-    #result = bytearray.fromhex('read')
-    #print result
-    if readByte==0x2C:
-        print('\n')
-    print([readByte])
-
-    #print int("a",16)
-
-    #i=i+1
-    
-    #print str(i)
-    #ser.write()
-'''
-

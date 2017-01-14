@@ -59,7 +59,6 @@ void my_printf(const char* fmt,  ...)
 
 void testFunc(){
 	
-	
 	LSM.readAccel();
 	LSM.convertAccel();
 	
@@ -69,37 +68,31 @@ void testFunc(){
 	
 	my_printf("%5.2f %5.2f %5.2f", varA, varB, varC);
 	
-	// Serial.write(0xFED4,_16BIT); // Dummy Data
-	// Serial.write(0x0a); // Creates a newline
-	// Serial.read(_16BIT);
-	
 	/*
 	// To send real data to Linux Processor
-	Serial.write(varA,_16BIT);	// X
-	Serial.write(varB,_16BIT);	// Y
-	Serial.write(varC,_16BIT);	// Z
+	Serial.write(0x01,_16BIT);		// Head (SOH)
+	Serial.write(varA,_16BIT);		// X
+	Serial.write(varB,_16BIT);		// Y
+	Serial.write(varC,_16BIT);		// Z
+	Serial.write(0x03,_16BIT);		// End of Text (ETX)
 	*/
 	
 	
 	// Set 1 of Accelerometer Dummy Data
-	Serial.write(0x01,_16BIT);	// Head
+	Serial.write(0x01,_16BIT);		// Head (SOH)
 	Serial.write(0xEFFA,_16BIT);	// X
-	Serial.write(0x0a,_16BIT); // Creates a newline
-	//Serial.write(0x2C,_16BIT);			// Comma for delimiter
 	Serial.write(0xBDFF,_16BIT);	// Y
-	Serial.write(0x0a,_16BIT); // Creates a newline
-	//Serial.write(0x2C,_16BIT);			// Comma for delimiter
 	Serial.write(0xF03F,_16BIT);	// Z
-	Serial.write(0x0a,_16BIT); // Creates a newline
-	//Serial.write(0x2C,_16BIT);			// Comma for delimiter
-	Serial.write(0x03,_16BIT);	// End of Text
+	Serial.write(0x03,_16BIT);		// End of Text (ETX)
 	
 	
 	/*
-	// Set 1 of Accelerometer Dummy Data
-	Serial.write(0xEFFA,_16BIT);	// X
-	Serial.write(0xBDFF,_16BIT);	// Y
-	Serial.write(0xF03F,_16BIT);	// Z
+	// Set 2 of Accelerometer Dummy Data
+	Serial.write(0x01,_16BIT);		// Head (SOH)
+	Serial.write(0x0AFB,_16BIT);	// X
+	Serial.write(0xF0FF,_16BIT);	// Y
+	Serial.write(0x0440,_16BIT);	// Z
+	Serial.write(0x03,_16BIT);		// End of Text (ETX)
 	*/
 	
 	taskList.schedule(testFunc, 3);
