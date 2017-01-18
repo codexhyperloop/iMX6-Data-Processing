@@ -1,0 +1,1 @@
+bindfs#/var/www/html /home/udooer/hyperloop/web fuse force-user=udooer,force-group=udooer,create-for-user=www-data,create-for-group=www-data,create-with-perms=0770,chgrp-ignore,chown-ignore,chmod-ignore 0 0

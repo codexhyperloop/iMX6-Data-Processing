@@ -1,0 +1,22 @@
+<html>
+<head>
+<title>Test read file</title>
+</head>
+<body onLoad="tmr=setInterval('readfile()', 500)">
+--------------------------<br>
+<div id="Data1">Empty</div>
+--------------------------<br>
+</body>
+<script language="JavaScript">
+function readfile() {
+var xhttp = new XMLHttpRequest();
+xhttp.onreadystatechange = function() {
+	if (this.readyState == 4 && this.status == 200) {
+		Data1.innerHTML = this.responseText;
+	}
+};
+xhttp.open("GET", "datafile1.txt", true);
+xhttp.send();
+}
+</script>
+</html>
