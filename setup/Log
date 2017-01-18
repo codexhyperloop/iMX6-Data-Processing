@@ -1,0 +1,9 @@
+1/17/17 // Webserver
+
+created Install.sh for "pushbutton" installation of clean UDOO
+
+Added line to /etc/fstab (Will need to be done for each installation)
+bindfs#/var/www/html /home/udooer/hyperloop fuse force-user=udooer,force-group=udooer,create-for-user=www-data,create-for-group=www-data,create-with-perms=0770,chgrp-ignore,chown-ignore,chmod-ignore 0 0
+
+// Use following command to mount /var/www/html
+sudo mount /home/udooer/hyperloop/web
