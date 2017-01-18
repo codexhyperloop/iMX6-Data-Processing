@@ -145,8 +145,8 @@ def twoConvert ( int )
 # Declare dump all json function
 def jsonDump(accelX, accelY, accelZ):
     accelX_Int = toInt(accelX)
-    accelY_Int = toInt(accelX)
-    accelZ_Int = toInt(accelX)
+    accelY_Int = toInt(accelY)
+    accelZ_Int = toInt(accelZ)
     #
     time = str(datetime.datetime.now().time())
     data = {
@@ -176,12 +176,12 @@ def jsonDump(accelX, accelY, accelZ):
         'systemErrors' : "All is according to plan (Not an actual value)",
         'systemAlerts' : "Ignorance is Bliss (Not an actual value)",
         'serialSAM1' : ser.isOpen(),
-        'serialSAM2' : ser2.isOpen(),
-        'serialIMX2' : ser1.isOpen()
+        'serialIMX2' : ser1.isOpen(),
+        'serialSAM2' : ser2.isOpen()
         }
-    with open('sam1data.json', mode='w') as f:
+    with open('web/sam1data.json', mode='w') as f:
         json.dump(data, f)
-    with open('archive/sam1data%s.json' % time, mode='w') as f:
+    with open('web/archive/sam1data%s.json' % time, mode='w') as f:
         json.dump(data, f)
     print datetime.datetime.now().time()
 
@@ -214,7 +214,6 @@ Mag Lev Position
 Mag Brake Position
 Yaw position
 
-
 Time
 
 '''
@@ -245,25 +244,28 @@ Mag Lev Position
 Mag Brak Position
 Yaw position
 
-
 Time
 '''
 
 ''' Potentially Dump MySQL Data
 '''
 
+#
 ''' Receive Start Command
 
 '''
 
+#
 ''' Receive Stop Command
 
 '''
 
+#
 ''' Receive Self Test Command
 
 '''
 
+#
 ''' Receive System Test Command
 
 '''
