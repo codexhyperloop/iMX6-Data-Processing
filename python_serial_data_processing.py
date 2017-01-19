@@ -1,4 +1,4 @@
-
+#! /usr/bin/python
 '''
     Created for Team Codex Hyperloop pod
     Primarily edited by Codi West
@@ -288,7 +288,27 @@ switch:
 '''***************************************************************'''
 # Must use with matching main.cpp in SAM3X8E-Libraries
 while True:
+
+    # Attempt multiple threads for separate serial connections - INCOMPLETE
+    # Check Status of Serial Connections
+        # Serial 0 (Primary SAM3X8E)
+        # Serial 1 (Secondary iMX6)
+        # Serial 2 (Secondary SAM3X8E)
+    # Read file for external web command - INCOMPLETE
+        # Send relay of command to external processors
+            # Serial 0 (Primary SAM3X8E)
+            # Serial 1 (Secondary iMX6)
+            # Serial 2 (Secondary SAM3X8E)
+    # Read incoming serial data
+        # try Serial 0 (Primary SAM3X8E)
+            # except switch to Serial 2 sensors
+        # try Serial 1 (Secondary iMX6)
+            # except print WARNING Secondary iMX not connected
+        # try Serial 2 (Secondary SAM3X8E)
+            #
+    ''' Reading SAM3X8E (Primary) serial - Create SEPARATE function'''
     # print "Locating start bit"
+    head = ""
     head = ser.read(1)
     # print ([head])    # Only needed for debugging
     if head == '\x01':
@@ -301,17 +321,33 @@ while True:
         accelZ = ser.read(2)
         #   Tests End of Text (ETX)
         end = ser.read(2)
+        print ("Received data")
         # print ([end])
         if(end == '\x00\x03'):
             integrity = True
             print 'Sensor Data Verified'
             print accelX
-            printAccel(accelX, accelY, accelZ)
+            # printAccel(accelX, accelY, accelZ)
             jsonDump(accelX, accelY, accelZ)
-        ser.read(1)         # The extra byte before 16BIT "head"
+        else:
+            print "ALERT!!! Receive error"
+        # ser.read(1)         # The extra byte before 16BIT "head"
         # print integrity
         print '\n'
 
+'''***************************************************************'''
+''' Secondary UDOO LOOP - PSEUDOCODE '''
+'''***************************************************************'''
+'''
+Check all serial connections
+if Primary UDOO is running correctly
+    Do nothing
+else
+    Take over role of Primary iMX6
+        take over sensor readings
+        print to webpage
+        listen for commands
+        etc
 
-
+'''
 
