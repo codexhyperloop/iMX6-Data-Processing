@@ -472,6 +472,7 @@ while True:
         # print 'testing connections'
     elif(command == 'webtest'):
         randomjson()
+        print "Creating JSON files with RANDOM values"
     else:
         logging.info('Awaiting COMMAND: Running tests in the meantime')
         print "No command found"
