@@ -3,6 +3,7 @@
     Created for Team Codex Hyperloop pod
     Original code by Codi West
     Created 1-10-17
+    Version P-0.5
 '''
 
 import serial
@@ -14,6 +15,8 @@ import datetime
 import threading    # NOT Optimized YET
 import logging      # To be utilized
 import json
+
+import random       # Used only for JSON testing
 
 '''
 try:
@@ -87,7 +90,8 @@ except:
 ''' Initialize Serial Connection to Auxiliary iMX6 Procesor '''
 try:
     ser1 = serial.Serial(
-        # port='dev/tty6',      # Port for UDOO
+        port='/dev/ttyAMA0',    # Port for Raspberry Pi -> Second Pi
+        #port='dev/tty6',      # Port for UDOO
         baudrate=115200,
         parity='N',
         #stopbits=serial.STOPBITS_ONE,
@@ -137,13 +141,16 @@ except:
 def checkSerial( ):
     # Serial
     global serUp
-    if  ser.isOpen():
-        # print 'Primary SAM3X8E Serial Connected'
-        # global serUp
-        serUp = True
-    else:
-        # print "WARNING: Primary SAM3X8E Processor Serial Disconnected"
-        #global serUp
+    try:
+        if  ser.isOpen():
+            # print 'Primary SAM3X8E Serial Connected'
+            # global serUp
+            serUp = True
+        else:
+            # print "WARNING: Primary SAM3X8E Processor Serial Disconnected"
+            #global serUp
+            serUp = False
+    except:
         serUp = False
     # Serial 1
     global ser1Up
@@ -151,6 +158,10 @@ def checkSerial( ):
         # print 'Auxiliary iMX6 Serial Connected'
         # global ser1Up
         ser1Up = True
+        #print "it works"
+        ser1.write('hello')
+        r = ser1.read()
+        print r
     else:
         # print "WARNING: Auxiliary iMX6 Processor Serial Disconnected"
         # global ser1Up
@@ -231,36 +242,40 @@ def getSer( ):
     global accelX
     global accelY
     global accelZ
-    
-    head = ""
-    head = ser.read(1)
-    # print ([head])    # Only needed for debugging
-    if head == '\x01':
-        integrity = False
-        # print '\n'
-        #print ('Start of sensor data')
-        logging.info('Start of sensor data')
-        #   Reads Accelerometer Sensor Data
-        accelX = ser.read(2)
-        accelY = ser.read(2)
-        accelZ = ser.read(2)
-        #   Tests End of Text (ETX)
-        end = ser.read(2)
-        #print ("Received data")
-        logging.info('Primary Serial Data Received')
-        # print ([end])
-        if(end == '\x00\x03'):
-            integrity = True
-            # print 'Sensor Data Verified'
-            logging.info('Sensor Data Verified')
-            printAccel()
-            jsonDump()
-        else:
-            # print "ALERT!!! Receive error from Primary SAM"
-            logging.info('ALERT!!! Receive error from Primary SAM')
-        # ser.read(1)         # The extra byte before 16BIT "head"
-        # print integrity
-        #print '\n'
+
+    try:
+        head = ""
+        head = ser.read(1)
+        # print ([head])    # Only needed for debugging
+        if head == '\x01':
+            integrity = False
+            # print '\n'
+            #print ('Start of sensor data')
+            logging.info('Start of sensor data')
+            #   Reads Accelerometer Sensor Data
+            accelX = ser.read(2)
+            accelY = ser.read(2)
+            accelZ = ser.read(2)
+            #   Tests End of Text (ETX)
+            end = ser.read(2)
+            #print ("Received data")
+            logging.info('Primary Serial Data Received')
+            # print ([end])
+            if(end == '\x00\x03'):
+                integrity = True
+                # print 'Sensor Data Verified'
+                logging.info('Sensor Data Verified')
+                printAccel()
+                jsonDump()
+            else:
+                # print "ALERT!!! Receive error from Primary SAM"
+                logging.info('ALERT!!! Receive error from Primary SAM')
+            # ser.read(1)         # The extra byte before 16BIT "head"
+            # print integrity
+            #print '\n'
+    except:
+        print "WARNING: Primary SAM3X8E Processor Serial FATAL Failure"
+        logging.warning('WARNING: Primary SAM3X8E Processor Serial FATAL Failure')
 
 
 ''' NOT COMPLETE - Partial '''
@@ -309,6 +324,55 @@ def jsonDump( ):
     # print datetime.datetime.now().time()
     logging.info('JSON Successfully Dumped')
 
+
+''' Temporary Functions '''
+# Testing purposes
+def randomword(length):
+    return ''.join(random.choice(string.lowercase) for i in range(length))
+
+# For testing Web Read of JSON
+def randomjson( ):
+    accelX_Int = random.random()
+    accelY_Int = random.random()
+    accelZ_Int = random.random()
+    #
+    time = str(datetime.datetime.now().time())
+    data = {
+        'timestamp' : time,
+        'accelX' : accelX_Int,
+        'accelY' : accelY_Int,
+        'accelZ' : accelZ_Int,
+        'calSpeed' : random.randint(0,1023943),
+        'wheelSpeed' : random.randint(0,99923842),
+        'position' : random.randint(0,1023943),
+        'temp' : random.randint(0,1023943),
+        'pressure' : random.uniform(0,20),
+        'batVoltage' : random.uniform(0,20),
+        'batCurrent' : random.uniform(0,20),
+        'angularRateX' : random.uniform(0,20),
+        'angularRateY' : random.uniform(0,20),
+        'angularRateZ' : random.uniform(0,20),
+        'attitudeX' : "hopeful",
+        'attitudeY' : "enlightened",
+        'attitudeZ' : "joyful",
+        'dBrakePosition' : random.uniform(0,20),
+        'dBrakeForce' : random.uniform(0,20),
+        'magLevPosition' : random.uniform(0,20),
+        'magBrakePosition' : random.uniform(0,20),
+        'yawPosition' : random.uniform(0,20),
+        'operationMode' : random.uniform(0,20),
+        'systemErrors' : "All is according to plan (Not an actual value)",
+        'systemAlerts' : "Ignorance is Bliss (Not an actual value)",
+        'serialSAM1' : random.randint(0,1),
+        'serialIMX2' : random.randint(0,1),
+        'serialSAM2' : random.randint(0,1)
+        }
+    with open('web/sam1data.json', mode='w') as f:
+        json.dump(data, f)
+    with open('web/datalog/sam1data%s.json' % time, mode='w') as f:
+        json.dump(data, f)
+    # print datetime.datetime.now().time()
+    logging.info('JSON Successfully Dumped')
 
 # Read all serial data function
 ''' Read All Data Function
@@ -398,7 +462,7 @@ while True:
         # printAccel()  # Contained in getSer()
         # jsonDump()    # Contained in getSer()
         # print 'start'
-    elif(command == 'systemtest'):
+    elif(command == 'selftest'):
         # logging.info('Received SYSTEMTEST command')
         checkSerial()
         # print 'testing serial connections'
@@ -406,9 +470,12 @@ while True:
         # logging.info('Received SELFTEST command')
         checkSerial()
         # print 'testing connections'
+    elif(command == 'webtest'):
+        randomjson()
     else:
         logging.info('Awaiting COMMAND: Running tests in the meantime')
-        checkSerial()
+        print "No command found"
+        # checkSerial()
         # print 'Not receiving any commands from HQ'
 
 
