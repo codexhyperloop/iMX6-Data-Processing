@@ -3,11 +3,11 @@
     Created for Team Codex Hyperloop pod
     Original code by Codi West
     Created 1-10-17
-    Version P-0.6
+    Version P-0.65
 '''
 
 import serial
-#import time
+import time
 import datetime
 #import struct
 #import array
@@ -85,7 +85,7 @@ def initSer( ):
     try:
         ser = serial.Serial(
             port='/dev/ttyACM0',    # Port for Raspberry Pi
-            # port='dev/tty6',      # Port for UDOO
+            # port='dev/ttyS0',      # Port for UDOO (iMX6-1) -> Primary SAM
             baudrate=115200,
             parity='N',
             #stopbits=serial.STOPBITS_ONE,
@@ -110,7 +110,7 @@ def initSer1( ):
     try:
         ser1 = serial.Serial(
             port='/dev/ttyAMA0',    # Port for Raspberry Pi -> Second Pi
-            #port='dev/tty6',      # Port for UDOO
+            #port='dev/tty##',      # Port for UDOO (iMX6-1) -> Second iMX6
             baudrate=115200,
             parity='N',
             #stopbits=serial.STOPBITS_ONE,
@@ -135,7 +135,8 @@ def initSer2( ):
     global ser2
     try:
         ser2 = serial.Serial(
-            port='dev/ttySO',      # Port for UDOO
+            port='dev/ttySO',       # Port for Rasperry Pi -> Second SAM
+            #port='dev/tty##',      # Port for UDOO (iMX6-1) -> Second SAM 
             baudrate=115200,
             parity='N',
             #stopbits=serial.STOPBITS_ONE,
@@ -483,9 +484,9 @@ def randomjson( ):
     accelY_Int = random.random()
     accelZ_Int = random.random()
     #
-    time = str(datetime.datetime.now().time())
+    timec = str(datetime.datetime.now().time())
     data = {
-        'timestamp' : time,
+        'timestamp' : timec,
         'accelX' : accelX_Int,
         'accelY' : accelY_Int,
         'accelZ' : accelZ_Int,
@@ -520,7 +521,7 @@ def randomjson( ):
         json.dump(data, f)
     # print datetime.datetime.now().time()
     logging.info('JSON Successfully Dumped')
-
+    time.sleep(0.2)
 
 ''' Read All Data Function
 MCU1 && CPU2 && MCU2
@@ -562,6 +563,8 @@ dumpJSONThread = FuncThread("dumpJSON-Thread", jsonDump)
 
 sendCommandThread = FuncThread("sendCommand-Thread", jsonDump)
 
+RandomJSONThread = FuncThread("dumpJSON-Thread", randomjson)
+
 '''***************************************************************'''
 ''' PRIMARY LOOP '''
 '''***************************************************************'''
@@ -593,8 +596,12 @@ while True:
         checkSerial()
         # print 'testing connections'
     elif(command == 'webtest'):
-        randomjson()
-        print "Creating JSON files with RANDOM values"
+        if RandomJSONThread.isAlive():
+            # print "I am checking serial connections"
+            thread1 = True
+        else:
+            RandomJSONThread.start()
+        #print "Creating JSON files with RANDOM values"
     else:
         # logging.info('Awaiting COMMAND: Running tests in the meantime')
         # checkSerial()
