@@ -3,7 +3,9 @@
     Created for Team Codex Hyperloop pod
     Original code by Codi West
     Created 1-10-17
-    Version P-0.65
+    Version P-0.7
+
+    Can be compiled into C code through Cython (needs to have C datatypes added)
 '''
 
 import serial
@@ -13,8 +15,11 @@ import datetime
 #import array
 #import io
 import threading    # NOT Fully Optimized YET
+import multiprocessing
 import logging
 import json
+import os
+import string
 
 import random       # Used only for JSON testing
 
@@ -65,14 +70,44 @@ class FuncThread(threading.Thread):
         self._args = args
         threading.Thread.__init__(self)
         self.name = name
+        self._pause = False # threading.Event()
+
+    def pause(self):
+        print "Stopping " + self.name
+        self._pause = True
+        # print self._pause
+
+    def resume(self):
+        print "Restarting " + self.name
+        self._pause = False
+        # print self._pause
+
+    def paused(self):
+        return self._pause  # .isSet()
+
+    def run(self):
+        print "Starting " + self.name
+        while True:
+            while not self._pause:
+                self._target(*self._args)
+            # print self.name + ' is paused'
+            logging.info(self.name + ' is paused')
+
+'''***************************************************************'''
+''' Create Multiprocessing Class - Canceled Testing '''
+'''
+class FuncProcess(multiprocessing.Process):
+    def __init__(self, name, target, *args):
+        self._target = target
+        self._args = args
+        threading.Thread.__init__(self)
+        self.name = name
  
     def run(self):
         print "Starting " + self.name
         while True:
             self._target(*self._args)
-
-
-        
+'''   
 '''***************************************************************'''
 ''' Declare all functions '''
 '''***************************************************************'''
@@ -283,7 +318,7 @@ def readSer1( ):
 def readSer2( ):
 
     try:
-        head = ser12.read(1)
+        head = ser2.read(1)
         if head == '\x01':
             # print '\n'
             #print ('Start of sensor data')
@@ -480,48 +515,56 @@ def randomword(length):
 
 # For testing Web Read of JSON
 def randomjson( ):
-    accelX_Int = random.random()
-    accelY_Int = random.random()
-    accelZ_Int = random.random()
-    #
-    timec = str(datetime.datetime.now().time())
-    data = {
-        'timestamp' : timec,
-        'accelX' : accelX_Int,
-        'accelY' : accelY_Int,
-        'accelZ' : accelZ_Int,
-        'calSpeed' : random.randint(0,1023943),
-        'wheelSpeed' : random.randint(0,99923842),
-        'position' : random.randint(0,1023943),
-        'temp' : random.randint(0,1023943),
-        'pressure' : random.uniform(0,20),
-        'batVoltage' : random.uniform(0,20),
-        'batCurrent' : random.uniform(0,20),
-        'angularRateX' : random.uniform(0,20),
-        'angularRateY' : random.uniform(0,20),
-        'angularRateZ' : random.uniform(0,20),
-        'attitudeX' : "hopeful",
-        'attitudeY' : "enlightened",
-        'attitudeZ' : "joyful",
-        'dBrakePosition' : random.uniform(0,20),
-        'dBrakeForce' : random.uniform(0,20),
-        'magLevPosition' : random.uniform(0,20),
-        'magBrakePosition' : random.uniform(0,20),
-        'yawPosition' : random.uniform(0,20),
-        'operationMode' : random.uniform(0,20),
-        'systemErrors' : "All is according to plan (Not an actual value)",
-        'systemAlerts' : "Ignorance is Bliss (Not an actual value)",
-        'serialSAM1' : random.randint(0,1),
-        'serialIMX2' : random.randint(0,1),
-        'serialSAM2' : random.randint(0,1)
-        }
-    with open('web/sam1data.json', mode='w') as f:
-        json.dump(data, f)
-    with open('web/datalog/sam1data%s.json' % time, mode='w') as f:
-        json.dump(data, f)
-    # print datetime.datetime.now().time()
-    logging.info('JSON Successfully Dumped')
-    time.sleep(0.2)
+    try:
+        accelX_Int = random.random()
+        accelY_Int = random.random()
+        accelZ_Int = random.random()
+        #
+        timec = str(datetime.datetime.now().time())
+        data = {
+            'timestamp' : timec,
+            'accelX' : accelX_Int,
+            'accelY' : accelY_Int,
+            'accelZ' : accelZ_Int,
+            'calSpeed' : random.uniform(0,150),
+            'wheelSpeed' : random.uniform(0,150),
+            'position' : random.randint(0,1023943),
+            'temp' : random.randint(0,1023943),
+            'pressure' : random.uniform(0,20),
+            'batVoltage' : random.uniform(0,20),
+            'batCurrent' : random.uniform(0,20),
+            'angularRateX' : random.uniform(0,20),
+            'angularRateY' : random.uniform(0,20),
+            'angularRateZ' : random.uniform(0,20),
+            'attitudeX' : "hopeful",
+            'attitudeY' : "enlightened",
+            'attitudeZ' : "joyful",
+            'dBrakePosition' : random.uniform(0,20),
+            'dBrakeForce' : random.uniform(0,20),
+            'magLevPosition' : random.uniform(0,20),
+            'magBrakePosition' : random.uniform(0,20),
+            'yawPosition' : random.uniform(0,20),
+            'operationMode' : random.uniform(0,20),
+            'systemErrors' : "All is according to plan (Not an actual value)",
+            'systemAlerts' : "Ignorance is Bliss (Not an actual value)",
+            'serialSAM1' : random.randint(0,1),
+            'serialIMX2' : random.randint(0,1),
+            'serialSAM2' : random.randint(0,1)
+            }
+        with open('web/sam1data.json', mode='w') as f:
+            json.dump(data, f)
+        try:
+            with open('web/datalog/sam1data%s.json' % time, mode='w') as f:
+                json.dump(data, f)
+            # print datetime.datetime.now().time()
+            logging.info('JSON Successfully Dumped')
+        except:
+            os.mkdir('web/datalog/')
+            print 'datalog folder created'
+            logging.info('datalog folder created')
+        time.sleep(0.2)
+    except:
+        logging.warning('FATAL: JSON Data Could Not Be Dumped')
 
 ''' Read All Data Function
 MCU1 && CPU2 && MCU2
@@ -565,6 +608,8 @@ sendCommandThread = FuncThread("sendCommand-Thread", jsonDump)
 
 RandomJSONThread = FuncThread("dumpJSON-Thread", randomjson)
 
+# RandomJSONProcesss = FuncProcess("dumpJSON-Thread", randomjson)
+
 '''***************************************************************'''
 ''' PRIMARY LOOP '''
 '''***************************************************************'''
@@ -576,12 +621,25 @@ while True:
     command = getCommand()
     # Very dissapointed upon finding out Python does not have switch statements'
     if(command == 'stop'):
+        if RandomJSONThread.isAlive():
+            if not RandomJSONThread.paused():
+                RandomJSONThread.pause()
+        #else:
+            #print "JSON not alive"
+        if checkSerThread.isAlive():
+            if not checkSerThread.paused():
+                checkSerThread.pause()
+        #else:
+            #print "Serial Check not alive"
         # logging.warning('Received STOP command; Emergency Braking')
-        checkSerial()
+        # checkSerial()
         # print 'stop'
     elif(command == 'start'):
+        if RandomJSONThread.isAlive():
+            if not RandomJSONThread.paused():
+                RandomJSONThread.pause()
         # logging.info('Received START command')
-        checkSerial()
+        # checkSerial()
         # Send Start Command
         # getSer()
         # printAccel()  # Contained in getSer()
@@ -597,20 +655,25 @@ while True:
         # print 'testing connections'
     elif(command == 'webtest'):
         if RandomJSONThread.isAlive():
-            # print "I am checking serial connections"
             thread1 = True
         else:
             RandomJSONThread.start()
+        if RandomJSONThread.paused():
+            RandomJSONThread.resume()
         #print "Creating JSON files with RANDOM values"
-    else:
-        # logging.info('Awaiting COMMAND: Running tests in the meantime')
-        # checkSerial()
-        # print 'Not receiving any commands from HQ'
+    elif(command == 'serial'):       
         if checkSerThread.isAlive():
             # print "I am checking serial connections"
             thread1 = True
         else:
             checkSerThread.start()
+        if checkSerThread.paused():
+            checkSerThread.resume()
+    else:
+        # logging.info('Awaiting COMMAND: Running tests in the meantime')
+        # checkSerial()
+        print 'Not receiving any commands from HQ'
+
         
 
 
