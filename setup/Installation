@@ -1,5 +1,7 @@
 1/17/17 // UDOO Quad Installation
 
+// Updated 1/27/16
+
 // When setting up an UDOO Quad for the first time (Fresh Installation)
 
 // Change port of UDOO Web Control Panel ***IMPORTANT***
@@ -30,10 +32,19 @@ bindfs#/var/www/html /home/udooer/hyperloop fuse force-user=udooer,force-group=u
 
 3. Press [Ctrl]+[x] to exit "fstab", when asked to save type "y" and then [Enter]
 
-// Use following command to mount /var/www/html to /home/udooer/hyperloop/web
+// The above setup should mount /var/www/html to /home/udooer/hyperloop/web on UDOObuntu startup
+// Use following command to mount /var/www/html to /home/udooer/hyperloop/web if not mounted on boot
 sudo mount /home/udooer/hyperloop/web
 
 // After all of the above is set up and working
 1. Place Python code in /home/udooer/hyperloop (Found at https://github.com/codexhyperloop/iMX6-Data-Processing)
-2. Place Web code in /home/udooer/hyperloop/web (Found at https://github.com/codexhyperloop/iMX6-Web-Services)
+//DISCARD - 2. Place Web code in /home/udooer/hyperloop/web (Found at https://github.com/codexhyperloop/iMX6-Web-Services)
+2. Place Web code in /home/udooer/hyperloop/web from the same Data-Processing repo
+
 (Note: that files placed in /home/udooer/hyperloop/web SHOULD automatically be placed in /var/www/html via the above bindfs setup)
+
+// Controlling the Pod
+1. Navigate to the Pod dashboard by typing "[UDOO IP Address]/freeboard" into web browser of remote PC
+2. Start Python Program
+	a. Use "RealVNC Viewer" to connect to UDOO IP Address
+	b. Start Python program from /home/udooer/hyperloop folder
