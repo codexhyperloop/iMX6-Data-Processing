@@ -21,7 +21,15 @@ import json
 import os
 import string
 
-#import numpy
+import numpy
+
+
+
+
+
+
+import initdata1.py
+import serial2.py
 
 import random       # Used only for JSON testing
 

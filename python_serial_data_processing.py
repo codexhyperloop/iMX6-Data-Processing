@@ -12,7 +12,7 @@ import serial
 import time
 import datetime
 #import struct
-#import array
+import array
 #import io
 import threading    # NOT Fully Optimized YET
 #import multiprocessing
@@ -21,9 +21,11 @@ import json
 import os
 import string
 
-#import numpy
+import numpy
 
 import random       # Used only for JSON testing
+
+# See INIT Section for 
 
 '''***************************************************************'''
 ''' Enable Logging '''
@@ -67,6 +69,14 @@ accelX_Int = 1
 accelY_Int = 1
 accelZ_Int = 1
 '''
+
+# Sensor Data Arrays
+#serProt=array.array('i',(0,)*5)
+serProt = numpy.zeros(shape=(5))
+serRXdata = numpy.zeros(shape=(5))
+serDataName = numpy.zeros(shape=(255))
+prmForm = numpy.zeros(shape=(255))
+prmSize = numpy.zeros(shape=(255))
 
 '''***************************************************************'''
 ''' Create Threading Class '''
@@ -666,6 +676,12 @@ switch:
 '''***************************************************************'''
 logging.info('Initializing...')
 print 'Initializing...'
+
+
+# Imports from Nils
+import initdata1
+import serial2
+
 
 # Initialize Serial Connections for the first time
 initSerSAM1()

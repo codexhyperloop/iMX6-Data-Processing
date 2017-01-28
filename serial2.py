@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 # make a while loop using this, checking "bytes received" as return value
 # produces:
 # serRXmsgType  (a char)
