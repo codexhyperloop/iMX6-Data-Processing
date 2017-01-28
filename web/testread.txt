@@ -1,0 +1,1 @@
+This is a test read of a .txt file. If you are reading this, then your web server permissions are correct.

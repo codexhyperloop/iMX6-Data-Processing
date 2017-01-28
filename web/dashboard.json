@@ -7,53 +7,14 @@
 			"width": 1,
 			"row": {
 				"3": 1,
-				"4": 15,
-				"5": 1,
-				"6": 1
-			},
-			"col": {
-				"3": 1,
 				"4": 1,
-				"5": 1,
-				"6": 2
-			},
-			"col_width": 1,
-			"widgets": [
-				{
-					"type": "text_widget",
-					"settings": {
-						"title": "Wheel Speed",
-						"size": "regular",
-						"value": "datasources[\"Sensor1\"][\"wheelSpeed\"]",
-						"sparkline": true,
-						"animate": false,
-						"units": "m/s"
-					}
-				},
-				{
-					"type": "gauge",
-					"settings": {
-						"title": "Wheel Speed",
-						"value": "datasources[\"Sensor1\"][\"wheelSpeed\"]",
-						"units": "m/s",
-						"min_value": 0,
-						"max_value": "150"
-					}
-				}
-			]
-		},
-		{
-			"width": 1,
-			"row": {
-				"3": 1,
-				"4": 1,
-				"5": 1,
+				"5": 13,
 				"6": 1
 			},
 			"col": {
 				"3": 3,
 				"4": 2,
-				"5": 4,
+				"5": 5,
 				"6": 4
 			},
 			"col_width": 1,
@@ -84,44 +45,6 @@
 						"size": "regular",
 						"value": "datasources[\"Sensor1\"][\"serialSAM2\"]",
 						"animate": true
-					}
-				}
-			]
-		},
-		{
-			"width": 1,
-			"row": {
-				"3": 1,
-				"4": 1,
-				"5": 5,
-				"6": 5
-			},
-			"col": {
-				"3": 3,
-				"4": 3,
-				"5": 5,
-				"6": 5
-			},
-			"col_width": "1",
-			"widgets": [
-				{
-					"type": "text_widget",
-					"settings": {
-						"title": "Timestamp Received",
-						"size": "regular",
-						"value": "datasources[\"Sensor1\"][\"timestamp\"]",
-						"sparkline": true,
-						"animate": false
-					}
-				},
-				{
-					"type": "text_widget",
-					"settings": {
-						"title": "System Errors",
-						"size": "regular",
-						"value": "datasources[\"Sensor1\"][\"systemErrors\"]",
-						"sparkline": false,
-						"animate": false
 					}
 				}
 			]
@@ -173,7 +96,7 @@
 			},
 			"col": {
 				"3": 1,
-				"5": 3,
+				"5": 1,
 				"6": 1
 			},
 			"col_width": 1,
@@ -181,16 +104,16 @@
 				{
 					"type": "text_widget",
 					"settings": {
-						"title": "",
+						"title": "Current Command (from JSON file)",
 						"size": "regular",
-						"value": "SET URLS TO IP",
+						"value": "datasources[\"Sensor1\"][\"receivedComand\"]",
 						"animate": true
 					}
 				},
 				{
 					"type": "actuator",
 					"settings": {
-						"title": "Actuator Test - Start",
+						"title": "Start",
 						"urlOn": "http://192.168.1.123/writefile.php?command=start",
 						"urlOff": "http://192.168.1.123/writefile.php",
 						"on_text": "Start flag set"
@@ -219,6 +142,30 @@
 						"urlOn": "http://192.168.1.123/writefile.php?command=clear",
 						"urlOff": "http://192.168.1.123/writefile.php",
 						"on_text": "Previous flag cleared"
+					}
+				},
+				{
+					"type": "actuator",
+					"settings": {
+						"title": "Emergency Stop"
+					}
+				},
+				{
+					"type": "actuator",
+					"settings": {
+						"title": "Serial Check"
+					}
+				},
+				{
+					"type": "actuator",
+					"settings": {
+						"title": "System Test"
+					}
+				},
+				{
+					"type": "actuator",
+					"settings": {
+						"title": "Self Test"
 					}
 				}
 			]
@@ -250,28 +197,119 @@
 			]
 		},
 		{
+			"title": "System Status",
+			"width": 1,
+			"row": {
+				"5": 21
+			},
+			"col": {
+				"5": 5
+			},
+			"col_width": 1,
+			"widgets": []
+		},
+		{
 			"width": 1,
 			"row": {
 				"3": 1,
-				"5": 9,
-				"6": 9
+				"4": 1,
+				"5": 5,
+				"6": 5
 			},
 			"col": {
 				"3": 3,
-				"5": 4,
-				"6": 4
+				"4": 3,
+				"5": 5,
+				"6": 5
+			},
+			"col_width": "1",
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"title": "Timestamp Received",
+						"size": "regular",
+						"value": "datasources[\"Sensor1\"][\"timestamp\"]",
+						"sparkline": false,
+						"animate": false,
+						"units": ""
+					}
+				},
+				{
+					"type": "text_widget",
+					"settings": {
+						"title": "System Errors",
+						"size": "regular",
+						"value": "datasources[\"Sensor1\"][\"systemErrors\"]",
+						"sparkline": false,
+						"animate": false
+					}
+				},
+				{
+					"type": "text_widget",
+					"settings": {
+						"title": "System Alerts",
+						"size": "regular",
+						"value": "datasources[\"Sensor1\"][\"systemAlerts\"]",
+						"animate": false
+					}
+				}
+			]
+		},
+		{
+			"title": "Pod Position",
+			"width": 1,
+			"row": {
+				"5": 13
+			},
+			"col": {
+				"5": 3
 			},
 			"col_width": 1,
 			"widgets": [
 				{
-					"type": "jqPlotWidget",
+					"type": "gauge",
 					"settings": {
-						"id": "chart1",
-						"data": "datasources[\"Sensor1\"][\"wheelSpeed\"]",
-						"options": "",
-						"chartHeight": 300,
-						"chartWidth": 300,
-						"height": 5
+						"title": "",
+						"value": "datasources[\"Sensor1\"][\"position\"]",
+						"units": "Meters [?]",
+						"min_value": 0,
+						"max_value": "1500"
+					}
+				}
+			]
+		},
+		{
+			"title": "Velocity",
+			"width": 1,
+			"row": {
+				"5": 13
+			},
+			"col": {
+				"5": 2
+			},
+			"col_width": 1,
+			"widgets": []
+		},
+		{
+			"title": "Temperature",
+			"width": 1,
+			"row": {
+				"5": 17
+			},
+			"col": {
+				"5": 2
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"size": "regular",
+						"value": "datasources[\"Sensor1\"][\"temp\"]",
+						"sparkline": true,
+						"animate": false,
+						"units": "Degrees Celsius"
 					}
 				}
 			]
@@ -282,13 +320,13 @@
 			"row": {
 				"3": 5,
 				"4": 1,
-				"5": 13,
+				"5": 1,
 				"6": 1
 			},
 			"col": {
 				"3": 1,
 				"4": 1,
-				"5": 3,
+				"5": 4,
 				"6": 6
 			},
 			"col_width": 1,
@@ -321,6 +359,119 @@
 						"value": "datasources[\"Sensor1\"][\"accelZ\"]",
 						"sparkline": true,
 						"animate": false
+					}
+				}
+			]
+		},
+		{
+			"title": "Experimental Controls!",
+			"width": 1,
+			"row": {
+				"5": 21
+			},
+			"col": {
+				"5": 1
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "actuator",
+					"settings": {
+						"title": "System Exit",
+						"urlOn": "http://192.168.1.123/writefile.php?command=exitprogram",
+						"urlOff": "http://192.168.1.123",
+						"on_text": "Python flagged to EXIT!!!",
+						"off_text": "Will close Python program"
+					}
+				},
+				{
+					"type": "actuator",
+					"settings": {
+						"title": "Threading Switch (Keep Disabled)",
+						"urlOn": "http://192.168.1.123/threading.php?threading=yes",
+						"urlOff": "http://192.168.1.123/threading.php?threading=no",
+						"on_text": "Enabled Threading (EXPERIMENTAL)",
+						"off_text": "Disabled Threading"
+					}
+				},
+				{
+					"type": "actuator",
+					"settings": {
+						"title": "SAM3X8E-Reset",
+						"urlOn": "http://192.168.1.123/samreset.php",
+						"urlOff": "http://192.168.1.123",
+						"on_text": "",
+						"off_text": "Should run Sam3X8Ereset.sh Script"
+					}
+				},
+				{
+					"type": "actuator",
+					"settings": {
+						"title": "Run Python Program (Not working)",
+						"urlOn": "http://192.168.1.123/runpython.php",
+						"urlOff": "http://192.168.1.123"
+					}
+				}
+			]
+		},
+		{
+			"width": 1,
+			"row": {
+				"3": 1,
+				"4": 15,
+				"5": 1,
+				"6": 1
+			},
+			"col": {
+				"3": 1,
+				"4": 1,
+				"5": 3,
+				"6": 2
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"title": "Wheel Speed",
+						"size": "regular",
+						"value": "datasources[\"Sensor1\"][\"wheelSpeed\"]",
+						"sparkline": true,
+						"animate": false,
+						"units": "m/s"
+					}
+				},
+				{
+					"type": "gauge",
+					"settings": {
+						"title": "Wheel Speed",
+						"value": "datasources[\"Sensor1\"][\"wheelSpeed\"]",
+						"units": "m/s",
+						"min_value": 0,
+						"max_value": "150"
+					}
+				}
+			]
+		},
+		{
+			"title": "Pressure",
+			"width": 1,
+			"row": {
+				"5": 23
+			},
+			"col": {
+				"5": 2
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "text_widget",
+					"settings": {
+						"size": "regular",
+						"value": "datasources[\"Sensor1\"][\"pressure\"]",
+						"sparkline": false,
+						"animate": false,
+						"units": "PSI"
 					}
 				}
 			]
