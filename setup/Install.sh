@@ -11,7 +11,7 @@ apt-get install -y apache2
 apt-get install -y php5 php5-cli
 
 # Install Python and IDLE
-sudo apt-get install -y python python-dev python2.7 python2.7-dev idle
+sudo apt-get install -y python python-dev python2.7 python2.7-dev idle python-serial python-numpy
 
 # Install Cython for compiling Python in C
 sudo apt-get install -y cython

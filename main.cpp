@@ -31,71 +31,55 @@ CHRISTMAS BREAK GOALS:
 #define GYRO_CH		1		//Spi channel
 #define CONFIG		(SPI_CSR_BITS_16_BIT | SPI_CSR_NCPHA)
 
+LSM9DS0 LSM = LSM9DS0(&SPI, CONFIG, XM_CH, XM_CS, GYRO_CH, GYRO_CS);
+VCNL4010 PROX = VCNL4010(&Wire);
 
-Adafruit_LSM9DS0 LSM = Adafruit_LSM9DS0(&SPI, CONFIG, XM_CH, XM_CS, GYRO_CH, GYRO_CS);
-
-EventCaptureClass testCapture = EventCaptureClass(7, 100000, RISING, false);
-void TC7_Handler(){
-	testCapture.IRQHandler();
-}
-
-void printChar(void *p, char c){
-	Serial1.write((uint8_t)c, BYTE);	
-}
-
-void my_printf(const char* fmt,  ...)
-{
-
-	char buffer[150];
-	va_list args;
-	va_start (args, fmt);
-
-	tfp_vsprintf(buffer, fmt, args);
-
-	print("%s", buffer);
-	va_end (args);
-
-}
 
 void testFunc(){
 	
-	LSM.readAccel();
-	LSM.convertAccel();
-	
-	float varA = LSM.accelData.x;
-	float varB = LSM.accelData.y;
-	float varC = LSM.accelData.z;
-	
-	my_printf("%5.2f %5.2f %5.2f", varA, varB, varC);
-	
+	Serial.write(0x00F1,_16BIT);
+	Serial.write(0x3132,_16BIT);
+	Serial.write(0x2E33,_16BIT);
+	Serial.write(0x3435,_16BIT);
+	Serial.write(0x3637,_16BIT);
+	Serial.write(0x2020,_16BIT);
+	Serial.write(0xFF55,_16BIT);
 	/*
-	// To send real data to Linux Processor
-	Serial.write(0x01,_16BIT);		// Head (SOH)
-	Serial.write(varA,_16BIT);		// X
-	Serial.write(varB,_16BIT);		// Y
-	Serial.write(varC,_16BIT);		// Z
-	Serial.write(0x03,_16BIT);		// End of Text (ETX)
+	Serial.write(0x00C7,_16BIT);
+	Serial.write(0x3133,_16BIT);
+	Serial.write(0x2E35,_16BIT);
+	Serial.write(0x3739,_16BIT);
+	Serial.write(0x3234,_16BIT);
+	Serial.write(0x2020,_16BIT);
+	Serial.write(0xFFAA,_16BIT);
 	*/
 	
-	
-	// Set 1 of Accelerometer Dummy Data
+/*
 	Serial.write(0x01,_16BIT);		// Head (SOH)
 	Serial.write(0xEFFA,_16BIT);	// X
 	Serial.write(0xBDFF,_16BIT);	// Y
 	Serial.write(0xF03F,_16BIT);	// Z
 	Serial.write(0x03,_16BIT);		// End of Text (ETX)
+*/
+
+	// start=00, message=C5 (acc_y), "12.3456   ", stop=255
 	
+	//Write 1
+	//Wire.beginTransmission(0x13);
+	///Wire.write(0x87);
+	//Wire.endTransmission();
+
+	//Wire.requestFrom(0x13, 1);
 	
-	/*
-	// Set 2 of Accelerometer Dummy Data
-	Serial.write(0x01,_16BIT);		// Head (SOH)
-	Serial.write(0x0AFB,_16BIT);	// X
-	Serial.write(0xF0FF,_16BIT);	// Y
-	Serial.write(0x0440,_16BIT);	// Z
-	Serial.write(0x03,_16BIT);		// End of Text (ETX)
-	*/
+	//Write 2
+// 	Wire.beginTransmission(0x13);
+// 	Wire.write(0x87);
+// 	Wire.endTransmission();
+// 
+// 	Wire.requestFrom(0x13, 1);
 	
-	taskList.schedule(testFunc, 3);
+	//PROX.readProximity();
+	taskList.schedule(testFunc, 500);
 }
 
 
@@ -104,27 +88,32 @@ int main(void)
     /* Initialize the SAM system */
     SystemInit();
 	
-	init_printf(NULL, printChar);
-	
+	//Setup the debug pins
 	pinMode(debugPin1, OUTPUT);
 	pinMode(debugPin2, OUTPUT);
-	digitalWrite(debugPin1, LOW);
-	digitalWrite(debugPin2, LOW);
+	digitalWrite(debugPin1, HIGH);
+	digitalWrite(debugPin2, HIGH);
 
 	
 	Serial1.begin();
-	testCapture.begin();
+	Wire.begin();
 	
 	Serial.begin();
+	//PROX.begin();
+	//testCapture.begin();
 	
+	/*
 	LSM.begin(GYROSCALE_245DPS, ACCELRANGE_2G, MAGGAIN_2GAUSS,
 				GYRO_ODR_190_BW_125, ACCELDATARATE_100HZ, MAGDATARATE_50HZ);
 	
 	LSM.calibrateLSM9DS0();
+	*/
 	
 	testFunc();
 	
 	
+	//Delay a bit to let setup settle.
+	delayMilliseconds(500);
 	
     while (1) 
     {
@@ -132,6 +121,7 @@ int main(void)
 		//^^^ Expand this to include the ability to call more than void(*)(void) functions
 		
 		
+		//Sign of life
 		digitalWrite(debugPin1, HIGH);
 		digitalWrite(debugPin1, LOW);
     }

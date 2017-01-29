@@ -1,15 +1,22 @@
 #! /usr/bin/python
 
+import numpy
+import array
+
 # general protocol definitions
-startByte=0
-stopByte=255
+startByte=chr(0) # /x00
+stopByte=chr(255)
 
 # specific protocol definitions
-global serProt
+serProt = numpy.zeros(shape=(5),dtype=numpy.int)
+serRXdata = numpy.zeros(shape=(5))
+serDataName = [None]*256
+prmForm = numpy.zeros(shape=(256))
+prmSize = numpy.zeros(shape=(256))
 
 serProt[0]=1
 serProt[1]=1
-serProt[2]=10
+serProt[2]=10           # data block size (10 char)
 serProt[3]=1
 
 # constants
@@ -24,10 +31,12 @@ typeInt32=2
 serRXstep=0
 serRXstatus=0
 serRXmsgType=0
+serDataRXtoTX=False
 serRXdata[typeFloat]=0.0
 serRXdata[typeInt32]=0
 
 # protocol details - parameter names
+serDataName[0] = "ang_x"
 serDataName[1] = "ang_y"
 serDataName[2] = "ang_z"
 serDataName[3] = "temp"

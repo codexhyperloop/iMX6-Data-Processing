@@ -3,7 +3,7 @@
     Created for Team Codex Hyperloop pod
     Original code by Codi West
     Created 1-10-17
-    Version P-0.7.2 (1/28/17)
+    Version P-0.8.0 (1/28/17)
 
     Can be compiled into C code through Cython (optionally have C datatypes added)
 '''
@@ -25,7 +25,8 @@ import numpy
 
 import random       # Used only for JSON testing
 
-# See INIT Section for 
+# See INIT Section for Nils's serial protocol
+externalserial = False
 
 '''***************************************************************'''
 ''' Enable Logging '''
@@ -72,11 +73,13 @@ accelZ_Int = 1
 
 # Sensor Data Arrays
 #serProt=array.array('i',(0,)*5)
+'''
 serProt = numpy.zeros(shape=(5))
 serRXdata = numpy.zeros(shape=(5))
 serDataName = numpy.zeros(shape=(255))
 prmForm = numpy.zeros(shape=(255))
 prmSize = numpy.zeros(shape=(255))
+'''
 
 '''***************************************************************'''
 ''' Create Threading Class '''
@@ -679,14 +682,44 @@ print 'Initializing...'
 
 
 # Imports from Nils
-import initdata1
-import serial2
+if True:
+    #import initdata1
+    import serial2
+
+print serial2.d.serProt[0]
+
+i=128
+while (i<129):
+    #print serial2.d.serDataName[i]
+    i = i +1
+
 
 
 # Initialize Serial Connections for the first time
 initSerSAM1()
-initSerIMX2()
-initSerSAM2()
+#initSerIMX2()
+#initSerSAM2()
+
+
+i=0
+while i<100:
+    head = serSAM1.read()
+    print head.encode("hex")
+    i=i+1
+
+
+'''
+i=0
+j=0
+while i<30 and j<100000:
+    tmp=serial2.getSerial(serSAM1)
+    if tmp>0:
+        #print tmp
+        i=i+1  # IN Java i++     
+    j+=1
+    serDataRXtoTX=False
+    print tmp
+'''
 
 threadingMode = threadOption()
 
@@ -784,6 +817,7 @@ if threadingMode:
 
 
 # For THREADING = DISABLED (Default)
+'''
 else:
     while True:
         command = getCommand()
@@ -813,6 +847,8 @@ else:
         elif(command == 'exitprogram'):
             #sendCommandSAM1()      # To notify SAM1 to hold tight
             exit()
+'''
+
 # TO DO
         
 # Attempt multiple threads for separate serial connections - COMPLETE
