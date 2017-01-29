@@ -700,7 +700,7 @@ initSerSAM1()
 #initSerIMX2()
 #initSerSAM2()
 
-
+'''
 i=0
 while i<100:
     head = serSAM1.read()
@@ -711,15 +711,16 @@ while i<100:
 '''
 i=0
 j=0
-while i<30 and j<100000:
+while i<30 : #and j<100000:
     tmp=serial2.getSerial(serSAM1)
-    if tmp>0:
+    if serial2.d.serDataRXtoTX==True:
         #print tmp
-        i=i+1  # IN Java i++     
+        i=i+1  # IN Java i++
+        print serial2.d.serRXdata[serial2.d.typeInt32]
     j+=1
-    serDataRXtoTX=False
+    serial2.d.serDataRXtoTX=False
     print tmp
-'''
+
 
 threadingMode = threadOption()
 
